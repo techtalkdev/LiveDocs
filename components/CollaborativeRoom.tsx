@@ -12,8 +12,9 @@ const CollaborativeRoom = ({ roomId, roomMetadata }: CollaborativeRoomProps) => 
           <RoomProvider id={roomId}>
             <ClientSideSuspense fallback={<Loader />}>
             <div className='collaborative-room'>
+
                 <Header>
-                    <div className='flex w-fit items-center justify-center gap-2'>
+                    <div className='items-center justify-center gap-2'>
                         <p className='document-title'>Title</p>
                     </div>
                     <div className='flex w-full flex-1 justify-end gap-2 sm:gap-3'>
