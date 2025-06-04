@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 'use client';
 import { ReactNode } from "react";
 import {
@@ -5,9 +6,11 @@ import {
   ClientSideSuspense,
 } from "@liveblocks/react/suspense";
 import Loader from "@/components/Loader";
-import { getClerkUsers } from "@/lib/actions/user.actions";
+import { getClerkUsers, getDocumentUsers } from "@/lib/actions/user.actions";
+import { useUser } from "@clerk/nextjs";
 
 const Provider = ({ children }: { children: ReactNode }) => {
+  const { user: clerkUser } = useUser();
   return (
     <LiveblocksProvider 
         authEndpoint= '/api/liveblocks-auth'  
@@ -15,7 +18,14 @@ const Provider = ({ children }: { children: ReactNode }) => {
           const users = await getClerkUsers({userIds});
           return users;
         }}
-        /*publicApiKey={"pk_dev_1sU7B3LQwcR1T6Ody5Zlj7hc-KhmvEArMIO4UfoSVq0WYCOpn-vMqoVILPev1mnZ"} */
+        resolveMentionSuggestions={async ({ text, roomId }) => {
+          const roomUsers = await getDocumentUsers({ 
+            roomId,
+            currentUser: clerkUser?.emailAddresses[0].emailAddress!,
+            text,
+          })
+          return roomUsers;
+        }}
         > 
         <ClientSideSuspense fallback={<Loader />}>
           {children}
